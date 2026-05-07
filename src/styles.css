@@ -1,0 +1,114 @@
+@import "@fontsource-variable/hubot-sans";
+@import "@fontsource-variable/inconsolata";
+@import "@fontsource-variable/geist-mono";
+
+@import "tailwindcss";
+
+/* Class-based dark variant — `dark:bg-x` activates whenever any ancestor
+ * carries the `.dark` class. We use this only on the cross-project Status
+ * view, which has its own light/dark toggle. The rest of the app inherits
+ * each project's color, so `dark:` utilities elsewhere are intentionally
+ * inert. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Hubot Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Body text uses Inconsolata — a humanist monospace — to give Plot a
+     terminal / dev-tool aesthetic across all running text. */
+  --font-sans: "Inconsolata Variable", ui-monospace, "SFMono-Regular", monospace;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Consumed via Tailwind utilities (bg-plot-ink, text-plot-ink, border-plot-ink). */
+  --color-plot-ink: #2a1f18;
+}
+
+:root {
+  /*
+   * Project palette — referenced inline via `var(--color-plot-<key>)` in JSX.
+   * Declared outside `@theme` so all swatches are always emitted, regardless
+   * of which one is currently selected. Tailwind v4 tree-shakes unused @theme
+   * variables, which would otherwise leave only the active swatch defined.
+   *
+   * Grouped by row to mirror PALETTE / the swatch grid in the UI.
+   */
+
+  /* Row 1 — warm */
+  --color-plot-terracotta: #c46d49;
+  --color-plot-sienna: #b57448;
+  --color-plot-amber: #d59b58;
+  --color-plot-mustard: #d4ad6c;
+  --color-plot-wheat: #e3cca7;
+  --color-plot-cream: #ebe5dd;
+
+  /* Row 2 — purples / pinks */
+  --color-plot-iris: #7e7eb0;
+  --color-plot-lilac: #a199be;
+  --color-plot-lavender: #ccc3d5;
+  --color-plot-blush: #dfc6c2;
+  --color-plot-rose: #d5aeab;
+  --color-plot-mauve: #c99595;
+
+  /* Row 3 — blues / teals */
+  --color-plot-denim: #647fad;
+  --color-plot-chambray: #95a9c7;
+  --color-plot-sky: #bcceda;
+  --color-plot-mist: #cbdadc;
+  --color-plot-seafoam: #b0caca;
+  --color-plot-jade: #90b3ac;
+
+  /* Row 4 — greens / olives */
+  --color-plot-forest: #708c71;
+  --color-plot-sage: #a2b4a0;
+  --color-plot-celadon: #c1cdba;
+  --color-plot-olive: #d6d9c8;
+  --color-plot-moss: #c5c7ab;
+  --color-plot-ochre: #b6b283;
+
+  /* Legacy keys — only here so saved projects from older palettes still
+     have a defined background. Not surfaced in the picker. */
+  --color-plot-dusty-pink: #e8c5c0;
+  --color-plot-salmon: #d99488;
+  --color-plot-clay: #b56548;
+  --color-plot-rust: #a85d3e;
+  --color-plot-sand: #dccfb6;
+  --color-plot-pine: #5d7a5e;
+  --color-plot-slate: #8a99aa;
+  --color-plot-cool-grey: #bbc1cc;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  color: var(--color-plot-ink);
+}
+
+/* Mono small caps and digit readouts: always tabular figures so columns line up. */
+.font-mono {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Pointer cursor on every interactive element. Tailwind v4 preflight resets
+ * <button> to default cursor; we override here so users always know what's
+ * clickable. Disabled buttons revert to not-allowed.
+ */
+@layer base {
+  button,
+  a {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Hide scrollbar visually while keeping the element scrollable. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
