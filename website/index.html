@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plot — Plot. Track. Deliver.</title>
+    <meta
+      name="description"
+      content="Plot turns your Chrome new tab into a private workspace for planning, tracking, and delivering personal projects."
+    />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <meta property="og:title" content="Plot" />
+    <meta property="og:description" content="Plot. Track. Deliver." />
+    <meta property="og:image" content="https://plot.nostock.studio/images/chrome-store/plot_landing-1280x800.png" />
+    <meta property="og:url" content="https://plot.nostock.studio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      @font-face {
+        font-family: "Hubot Sans Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 900;
+        src: url("fonts/hubot-sans-latin-wght-normal.woff2") format("woff2-variations");
+      }
+
+      @font-face {
+        font-family: "Inconsolata Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 900;
+        src: url("fonts/inconsolata-latin-wght-normal.woff2") format("woff2-variations");
+      }
+
+      @font-face {
+        font-family: "Geist Mono Variable";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url("fonts/geist-mono-latin-wght-normal.woff2") format("woff2-variations");
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --font-display: "Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif;
+        --font-product-display: "Hubot Sans Variable", ui-sans-serif, system-ui, sans-serif;
+        --font-sans: "Inconsolata Variable", ui-monospace, "SFMono-Regular", monospace;
+        --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+        --ink: #2a2018;
+        --soil: #2a2018;
+        --paper: #f5f5f4;
+        --paper-soft: #e7e5e4;
+        --muted: rgba(42, 32, 24, 0.6);
+        --muted-strong: rgba(42, 32, 24, 0.75);
+        --line: rgba(42, 32, 24, 0.2);
+        --terracotta: #c46d49;
+        --iris: #7e7eb0;
+        --jade: #90b3ac;
+        --denim: #647fad;
+        --mustard: #d4ad6c;
+        --rose: #d5aeab;
+        --sage: #a2b4a0;
+        --max: 1200px;
+        --px: clamp(20px, 5vw, 72px);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .site-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 54%;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: clamp(24px, 3vw, 42px);
+        padding: 22px var(--px);
+        color: var(--paper);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .brand img {
+        width: 52px;
+        height: 52px;
+        display: block;
+      }
+
+      .nav-links a,
+      .eyebrow,
+      .section-kicker,
+      .footer-links a {
+        font-family: var(--font-mono);
+        font-feature-settings: "tnum";
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: clamp(18px, 2.3vw, 34px);
+      }
+
+      .nav-links a {
+        font-size: 12px;
+        text-decoration: none;
+        opacity: 0.7;
+      }
+
+      .nav-links a:hover {
+        opacity: 1;
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(420px, 46%) minmax(0, 54%);
+        height: 100vh;
+        min-height: 100vh;
+        max-height: 100vh;
+        overflow: hidden;
+        background: var(--paper);
+        color: var(--paper);
+      }
+
+      .hero::before {
+        content: none;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100vh;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--soil);
+        padding: 128px clamp(28px, 5vw, 72px) 76px;
+      }
+
+      .eyebrow {
+        margin-bottom: 28px;
+        font-size: 13px;
+        color: rgba(245, 245, 244, 0.66);
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        max-width: 560px;
+        margin: 0;
+        font-size: 7.25rem;
+        line-height: 0.84;
+        letter-spacing: 0;
+        font-weight: 700;
+      }
+
+      .dot-plot {
+        color: var(--terracotta);
+      }
+
+      .dot-track {
+        color: var(--iris);
+      }
+
+      .dot-deliver {
+        color: var(--jade);
+      }
+
+      .hero-copy {
+        display: block;
+        margin-top: 46px;
+      }
+
+      .hero-copy p {
+        font-family: var(--font-mono);
+        margin: 0;
+        max-width: 460px;
+        font-size: 1rem;
+        line-height: 1.55;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(245, 245, 244, 0.82);
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: flex-start;
+        margin-top: 32px;
+      }
+
+      .hero-plots {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        min-height: 0;
+        max-height: 100vh;
+        overflow: hidden;
+        background: var(--paper);
+        border-left: 3px solid var(--soil);
+      }
+
+      .plot-demo-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-rows: repeat(4, minmax(0, 1fr));
+        grid-auto-flow: dense;
+        grid-template-areas:
+          "p1 p1 p1 p2 p2 p2"
+          "p1 p1 p1 p2 p2 p2"
+          "p3 p3 p4 p4 p5 p5"
+          "p3 p3 p4 p4 p5 p5";
+        min-height: 0;
+        overflow: hidden;
+        background: var(--soil);
+        gap: 3px;
+      }
+
+      .plot-tile {
+        position: relative;
+        display: flex;
+        min-width: 0;
+        min-height: 0;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: clamp(18px, 2.35vw, 34px);
+        overflow: hidden;
+        background: var(--plot-bg);
+        color: var(--soil);
+        user-select: none;
+      }
+
+      .plot-tile:nth-child(1) {
+        grid-area: p1;
+      }
+
+      .plot-tile:nth-child(2) {
+        grid-area: p2;
+      }
+
+      .plot-tile:nth-child(3) {
+        grid-area: p3;
+      }
+
+      .plot-tile:nth-child(4) {
+        grid-area: p4;
+      }
+
+      .plot-tile:nth-child(5) {
+        grid-area: p5;
+      }
+
+      .plot-tile-title {
+        font-family: var(--font-product-display);
+        font-size: clamp(1.6rem, 3.7vw, 3.9rem);
+        font-weight: 800;
+        line-height: 0.88;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        word-break: break-word;
+      }
+
+      .plot-tile-meta {
+        display: grid;
+        gap: 14px;
+        font-family: var(--font-mono);
+      }
+
+      .plot-tile-kicker {
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(42, 32, 24, 0.58);
+      }
+
+      .plot-tile-counts {
+        display: flex;
+        align-items: baseline;
+        gap: 9px;
+        font-size: clamp(1.35rem, 2.65vw, 2.5rem);
+        line-height: 1;
+      }
+
+      .plot-tile-counts .slash,
+      .plot-tile-counts .total {
+        color: rgba(42, 32, 24, 0.42);
+      }
+
+      .plot-tile-counts .pct {
+        font-size: 0.42em;
+      }
+
+      .plot-tile-mini {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .plot-tile-mini span {
+        display: block;
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(42, 32, 24, 0.52);
+      }
+
+      .plot-tile-mini strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 18px;
+        font-weight: 400;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 52px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 24px;
+        border: 1px solid currentColor;
+        font-family: var(--font-mono);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .button.primary {
+        border-color: var(--paper);
+        background: var(--paper);
+        color: var(--soil);
+      }
+
+      .button.soil {
+        border-color: var(--soil);
+        background: var(--soil);
+        color: var(--paper);
+      }
+
+      .features {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 128px var(--px) 156px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 92px;
+      }
+
+      .feature {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.48fr) minmax(480px, 1fr);
+        gap: clamp(36px, 6vw, 88px);
+        align-items: center;
+        border-top: 1px solid var(--line);
+        padding-top: 42px;
+      }
+
+      .section-kicker {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .feature h2 {
+        font-family: var(--font-display);
+        grid-column: 1;
+        margin: 0 0 18px;
+        max-width: 500px;
+        font-size: 3rem;
+        line-height: 0.95;
+        letter-spacing: 0;
+        font-weight: 600;
+      }
+
+      .feature p {
+        font-family: var(--font-mono);
+        grid-column: 1;
+        max-width: 520px;
+        margin: 0;
+        color: var(--muted-strong);
+        font-size: 12px;
+        line-height: 1.75;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .feature img {
+        display: block;
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border: 2px solid var(--ink);
+        background: var(--paper-soft);
+      }
+
+      .manifesto {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: var(--paper-soft);
+      }
+
+      .manifesto-inner {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 124px var(--px);
+        display: grid;
+        grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+        gap: 80px;
+      }
+
+      .manifesto h2,
+      .faq h2 {
+        font-family: var(--font-display);
+        margin: 18px 0 0;
+        font-size: 5.5rem;
+        line-height: 0.92;
+        letter-spacing: 0;
+        font-weight: 700;
+      }
+
+      .manifesto-copy p {
+        font-family: var(--font-mono);
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.75;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .manifesto-copy p + p {
+        margin-top: 30px;
+      }
+
+      .manifesto-actions {
+        margin-top: 42px;
+      }
+
+      .faq {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 124px var(--px) 150px;
+        display: grid;
+        grid-template-columns: minmax(240px, 0.75fr) minmax(360px, 1.25fr);
+        gap: 80px;
+      }
+
+      .faq-list {
+        border-top: 1px solid var(--line);
+      }
+
+      .faq-item {
+        border-bottom: 1px solid var(--line);
+        padding: 28px 0;
+      }
+
+      .faq-item h3 {
+        font-family: var(--font-mono);
+        margin: 0 0 12px;
+        font-size: 13px;
+        line-height: 1.35;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .faq-item p {
+        font-family: var(--font-mono);
+        margin: 0;
+        max-width: 660px;
+        color: var(--muted-strong);
+        font-size: 12px;
+        line-height: 1.75;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      footer {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 32px;
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 52px var(--px) 48px;
+        border-top: 1px solid var(--line);
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 28px;
+      }
+
+      .footer-links a {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .copyright {
+        color: rgba(42, 32, 24, 0.45);
+        font-size: 13px;
+      }
+
+      @media (max-width: 820px) {
+        .site-nav {
+          position: absolute;
+          right: 0;
+          align-items: flex-start;
+          flex-direction: column;
+          mix-blend-mode: normal;
+        }
+
+        .hero {
+          height: auto;
+          min-height: auto;
+          max-height: none;
+          grid-template-columns: 1fr;
+        }
+
+        .hero-inner {
+          height: auto;
+          min-height: 86vh;
+          padding-top: 168px;
+          padding-bottom: 58px;
+        }
+
+        .hero-plots {
+          height: 58vh;
+          min-height: 58vh;
+          max-height: 58vh;
+          border-left: 0;
+          border-top: 3px solid var(--soil);
+        }
+
+        .plot-demo-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-rows: none;
+        }
+
+        .plot-demo-grid {
+          grid-template-areas: none;
+        }
+
+        .plot-tile,
+        .plot-tile:nth-child(n) {
+          grid-area: auto;
+          grid-column: span 1;
+          grid-row: span 1;
+          min-height: 220px;
+        }
+
+        .plot-tile-title {
+          font-size: 2.5rem;
+        }
+
+        .plot-tile-mini {
+          display: none;
+        }
+
+        h1 {
+          font-size: 4.5rem;
+        }
+
+        .hero-copy p {
+          font-size: 0.82rem;
+        }
+
+        .hero-copy,
+        .manifesto-inner,
+        .faq {
+          grid-template-columns: 1fr;
+        }
+
+        .cta-row {
+          justify-content: flex-start;
+        }
+
+        .features {
+          grid-template-columns: 1fr;
+          gap: 72px;
+          padding-top: 90px;
+          padding-bottom: 96px;
+        }
+
+        .feature {
+          grid-template-columns: 1fr;
+          gap: 24px;
+          padding-top: 32px;
+        }
+
+        .feature h2 {
+          grid-column: auto;
+          font-size: 2.35rem;
+        }
+
+        .feature p,
+        .feature img {
+          grid-column: auto;
+          grid-row: auto;
+        }
+
+        .manifesto h2,
+        .faq h2 {
+          font-size: 3.3rem;
+        }
+
+        .manifesto-copy p {
+          font-size: 1.25rem;
+        }
+
+        .manifesto-inner,
+        .faq {
+          padding-top: 88px;
+          padding-bottom: 96px;
+        }
+
+        footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Plot home">
+        <img src="images/logo_reverse.png" alt="" aria-hidden="true" />
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#manifesto">Manifesto</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </nav>
+
+    <main id="top">
+      <section class="hero" aria-label="Plot introduction">
+        <div class="hero-inner">
+          <div class="eyebrow">A private new tab workspace</div>
+          <h1>Plot<span class="dot-plot">.</span><br />Track<span class="dot-track">.</span><br />Deliver<span class="dot-deliver">.</span></h1>
+          <div class="hero-copy">
+            <p>
+              Stay on top of every project.
+            </p>
+            <div class="cta-row">
+              <a class="button primary" href="https://chromewebstore.google.com/" target="_blank" rel="noreferrer">Chrome Web Store</a>
+            </div>
+          </div>
+        </div>
+        <div class="hero-plots" aria-label="Plot project overview demo">
+          <div class="plot-demo-grid" aria-label="Project plots">
+            <article class="plot-tile" style="--plot-bg: var(--terracotta)">
+              <div class="plot-tile-title">Receipts</div>
+              <div class="plot-tile-meta">
+                <div>
+                  <div class="plot-tile-kicker">Today</div>
+                  <div class="plot-tile-counts"><span>1</span><span class="slash">/</span><span class="total">3</span><span class="pct">33%</span></div>
+                </div>
+                <div class="plot-tile-mini">
+                  <div><span>Backlog</span><strong>2</strong></div>
+                  <div><span>Decisions</span><strong>1</strong></div>
+                  <div><span>Learnings</span><strong>1</strong></div>
+                </div>
+              </div>
+            </article>
+            <article class="plot-tile" style="--plot-bg: var(--iris)">
+              <div class="plot-tile-title">Prompts</div>
+              <div class="plot-tile-meta">
+                <div>
+                  <div class="plot-tile-kicker">Today</div>
+                  <div class="plot-tile-counts"><span>1</span><span class="slash">/</span><span class="total">3</span><span class="pct">33%</span></div>
+                </div>
+                <div class="plot-tile-mini">
+                  <div><span>Backlog</span><strong>2</strong></div>
+                  <div><span>Decisions</span><strong>1</strong></div>
+                  <div><span>Learnings</span><strong>1</strong></div>
+                </div>
+              </div>
+            </article>
+            <article class="plot-tile" style="--plot-bg: var(--jade)">
+              <div class="plot-tile-title">Meals</div>
+              <div class="plot-tile-meta">
+                <div>
+                  <div class="plot-tile-kicker">Today</div>
+                  <div class="plot-tile-counts"><span>0</span><span class="slash">/</span><span class="total">3</span><span class="pct">0%</span></div>
+                </div>
+                <div class="plot-tile-mini">
+                  <div><span>Backlog</span><strong>2</strong></div>
+                  <div><span>Decisions</span><strong>1</strong></div>
+                  <div><span>Learnings</span><strong>1</strong></div>
+                </div>
+              </div>
+            </article>
+            <article class="plot-tile" style="--plot-bg: var(--denim)">
+              <div class="plot-tile-title">Focus</div>
+              <div class="plot-tile-meta">
+                <div>
+                  <div class="plot-tile-kicker">Today</div>
+                  <div class="plot-tile-counts"><span>0</span><span class="slash">/</span><span class="total">3</span><span class="pct">0%</span></div>
+                </div>
+                <div class="plot-tile-mini">
+                  <div><span>Backlog</span><strong>2</strong></div>
+                  <div><span>Decisions</span><strong>1</strong></div>
+                  <div><span>Learnings</span><strong>1</strong></div>
+                </div>
+              </div>
+            </article>
+            <article class="plot-tile" style="--plot-bg: var(--mustard)">
+              <div class="plot-tile-title">Launch</div>
+              <div class="plot-tile-meta">
+                <div>
+                  <div class="plot-tile-kicker">Today</div>
+                  <div class="plot-tile-counts"><span>0</span><span class="slash">/</span><span class="total">3</span><span class="pct">0%</span></div>
+                </div>
+                <div class="plot-tile-mini">
+                  <div><span>Backlog</span><strong>2</strong></div>
+                  <div><span>Decisions</span><strong>1</strong></div>
+                  <div><span>Learnings</span><strong>1</strong></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="features" id="features" aria-label="Plot features">
+        <article class="feature">
+          <h2>Stay on top of all your projects.</h2>
+          <p>
+            Plot replaces the blank Chrome new tab with a live project map.
+            Each project gets its own colored piece of ground, so neglected
+            work is visible before it disappears.
+          </p>
+          <img src="images/chrome-store/plot_landing-1280x800.png" alt="Plot showing multiple personal projects in a colorful project overview." />
+        </article>
+
+        <article class="feature">
+          <h2>Track tickets for each project.</h2>
+          <p>
+            Open a project to work through its real contents: tasks, shipped
+            deliverables, decisions, learnings, and the notes that keep the
+            project moving.
+          </p>
+          <img src="images/chrome-store/plot_plot-1280x800.png" alt="A single Plot project page with product work tracked in sections." />
+        </article>
+
+        <article class="feature">
+          <h2>Get an overview of all your tickets.</h2>
+          <p>
+            Track Backlog, To-do, and Delivered without turning your personal
+            projects into a heavy project management ritual.
+          </p>
+          <img src="images/chrome-store/plot_status-1280x800.png" alt="Plot status view showing Backlog, To-do, Delivered, Decision, and Learning columns." />
+        </article>
+
+        <article class="feature">
+          <h2>Visualize your progress and growth.</h2>
+          <p>
+            Lightweight analytics show delivery, streaks, activity, and work shape
+            across projects without turning progress into surveillance.
+          </p>
+          <img src="images/chrome-store/plot_stats-1280x800.png" alt="Plot Analyze view showing delivered work, activity, streaks, and radar chart." />
+        </article>
+      </section>
+
+      <section class="manifesto" id="manifesto">
+        <div class="manifesto-inner">
+          <div>
+            <h2>Your one-acre field for self-directed work.</h2>
+          </div>
+          <div class="manifesto-copy">
+            <p>
+              Plot is for people growing several things at once: vibe-coded
+              apps, writing, study, experiments, client ideas, and tiny tools
+              that may or may not become real products.
+            </p>
+            <p>
+              The point is not to capture every possible task. The point is to
+              open a new tab and know what deserves attention today.
+            </p>
+            <p>
+              When something ships, Plot asks what actually got delivered.
+              Over time, your new tab becomes a quiet record of movement.
+            </p>
+            <div class="manifesto-actions">
+              <a class="button soil" href="https://chromewebstore.google.com/" target="_blank" rel="noreferrer">Get Plot for Chrome</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq" id="faq">
+        <div>
+          <div class="section-kicker">FAQ</div>
+          <h2>FAQ</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3>What does Plot replace?</h3>
+            <p>
+              Plot replaces the Chrome new tab page. Opening a new tab shows
+              your project workspace instead of a blank page or default start
+              screen.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Where is my data stored?</h3>
+            <p>
+              Your projects, tasks, decisions, learnings, layout, and
+              preferences are stored locally in Chrome storage.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Does Plot require an account?</h3>
+            <p>
+              No. Plot is local-first and does not require a cloud account for
+              the current version.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Can I back up my projects?</h3>
+            <p>
+              Yes. Plot supports optional local backup to a folder you choose
+              on your own device.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Who is Plot for?</h3>
+            <p>
+              Indie builders, vibe coders, creators, students, researchers, and
+              anyone tending multiple personal projects.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-links">
+        <a href="mailto:hello@nostock.studio">Support</a>
+        <a href="privacy.html">Privacy</a>
+      </div>
+      <div class="copyright">&copy; 2026 NoStock Studio. All rights reserved.</div>
+    </footer>
+  </body>
+</html>

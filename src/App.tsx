@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStore } from './lib/store'
-import { formatDayLabel, todayKey } from './lib/date'
+import { formatDayLabel } from './lib/date'
+import { activeDayKey, isTodayView, projectsForDay } from './lib/projects'
 import {
   exportAllAsJson,
   hasPermission,
@@ -11,6 +12,7 @@ import CreateProject from './components/CreateProject'
 import ProjectsLanding from './components/ProjectsLanding'
 import StatusView from './components/StatusView'
 import OverviewView from './components/OverviewView'
+import StatsView from './components/StatsView'
 import BottomBar from './components/BottomBar'
 
 export default function App() {
@@ -96,12 +98,9 @@ export default function App() {
   // viewed day. On today this is the full list; on a past day, projects
   // created later are filtered out so the user can't browse a project that
   // didn't exist yet.
-  const today = todayKey()
-  const activeDay = viewingDay ?? today
-  const isOnToday = activeDay === today
-  const historicalProjects = isOnToday
-    ? projects
-    : projects.filter((p) => todayKey(p.createdAt) <= activeDay)
+  const activeDay = activeDayKey(viewingDay)
+  const isOnToday = isTodayView(viewingDay)
+  const historicalProjects = projectsForDay(projects, activeDay)
 
   // Defensive: a stale currentProjectId could point to a project that was
   // created after the viewed day. Treat as "no current project" so we route
@@ -131,6 +130,18 @@ export default function App() {
     return (
       <>
         <OverviewView />
+        <BottomBar onCreate={() => setCreating(true)} />
+      </>
+    )
+  }
+
+  // Stats mode = aggregate dashboard. Read-only; doesn't mutate any
+  // entries or projects. Window-end day is `viewingDay` (calendar in
+  // BottomBar slides the 30-day window backward).
+  if (viewMode === 'stats') {
+    return (
+      <>
+        <StatsView />
         <BottomBar onCreate={() => setCreating(true)} />
       </>
     )

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useStore } from '../lib/store'
 import { formatDayLabel, todayKey } from '../lib/date'
+import { projectsForDay } from '../lib/projects'
 import BackupSettings from './BackupSettings'
 import HitArea from './HitArea'
 
@@ -10,10 +11,15 @@ export default function BottomBar({ onCreate }: { onCreate: () => void }) {
   const setCurrentProject = useStore((s) => s.setCurrentProject)
   const viewMode = useStore((s) => s.viewMode)
   const setViewMode = useStore((s) => s.setViewMode)
+  const projects = useStore((s) => s.projects)
+  const plotsView = useStore((s) => s.plotsView)
+  const setPlotsView = useStore((s) => s.setPlotsView)
 
   const today = todayKey()
   const activeDay = viewingDay ?? today
   const isOnToday = viewingDay === null || viewingDay === today
+  const showPlotsViewToggle =
+    viewMode === 'project' && projectsForDay(projects, activeDay).length > 1
 
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -43,11 +49,11 @@ export default function BottomBar({ onCreate }: { onCreate: () => void }) {
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-50 h-12 text-stone-100 flex items-center justify-between px-4 font-mono text-xs transition-colors ${
+      className={`fixed inset-x-0 bottom-0 z-50 h-12 text-stone-100 flex items-center justify-between px-3 sm:px-4 font-mono text-[10px] sm:text-xs transition-colors ${
         isOnToday ? 'bg-plot-ink' : 'bg-red-900'
       }`}
     >
-      <div className="flex items-center gap-3 relative">
+      <div className="flex items-center gap-2 sm:gap-3 relative">
         <HitArea
           aria-label="Backup settings"
           onClick={() => setSettingsOpen((o) => !o)}
@@ -62,7 +68,7 @@ export default function BottomBar({ onCreate }: { onCreate: () => void }) {
         {settingsOpen && (
           <BackupSettings onClose={() => setSettingsOpen(false)} />
         )}
-        <span className="uppercase tracking-[0.2em]">
+        <span className="hidden sm:inline uppercase tracking-[0.2em]">
           {formatDayLabel(activeDay)}
         </span>
         <HitArea
@@ -84,13 +90,23 @@ export default function BottomBar({ onCreate }: { onCreate: () => void }) {
         )}
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-        <ModeButton
-          active={viewMode === 'project'}
-          onClick={() => setViewMode('project')}
-        >
-          Plots
-        </ModeButton>
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ModeButton
+            active={viewMode === 'project'}
+            onClick={() => setViewMode('project')}
+          >
+            Plots
+          </ModeButton>
+          {showPlotsViewToggle && (
+            <PlotsViewToggle
+              active={plotsView === 'city'}
+              onClick={() =>
+                setPlotsView(plotsView === 'city' ? 'bento' : 'city')
+              }
+            />
+          )}
+        </div>
         <span className="text-stone-100/30">/</span>
         <ModeButton
           active={viewMode === 'status'}
@@ -98,15 +114,23 @@ export default function BottomBar({ onCreate }: { onCreate: () => void }) {
         >
           Status
         </ModeButton>
+        <span className="text-stone-100/30">/</span>
+        <ModeButton
+          active={viewMode === 'stats'}
+          onClick={() => setViewMode('stats')}
+        >
+          Analyze
+        </ModeButton>
       </div>
 
-      <div>
+      <div className="flex items-center gap-4">
         {isOnToday ? (
           <HitArea
             onClick={onCreate}
             className="text-stone-100 hover:text-white uppercase tracking-[0.2em]"
           >
-            <span>+ Add New Plot</span>
+            <span className="hidden sm:inline">+ Add New Plot</span>
+            <span className="sm:hidden text-base leading-none">+</span>
           </HitArea>
         ) : (
           <div className="flex items-center gap-4">
@@ -125,6 +149,42 @@ export default function BottomBar({ onCreate }: { onCreate: () => void }) {
         )}
       </div>
     </div>
+  )
+}
+
+function PlotsViewToggle({
+  active,
+  onClick,
+}: {
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <HitArea
+      role="switch"
+      aria-checked={active}
+      aria-label="Toggle 3D Plots view"
+      title="3D Plots"
+      onClick={onClick}
+      className="text-stone-100/75 hover:text-white uppercase tracking-[0.18em] gap-1.5"
+    >
+      <span
+        className={`relative block h-[18px] w-9 rounded-full border transition-colors duration-200 ease-out ${
+          active
+            ? 'bg-stone-100 border-stone-100'
+            : 'bg-transparent border-stone-100/45'
+        }`}
+      >
+        <span
+          className={`absolute left-[3px] top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full transition-[transform,background-color] duration-200 ease-out will-change-transform ${
+            active
+              ? 'translate-x-[18px] bg-plot-ink'
+              : 'translate-x-0 bg-stone-100/75'
+          }`}
+        />
+      </span>
+      <span className="text-[10px] leading-none">3D</span>
+    </HitArea>
   )
 }
 

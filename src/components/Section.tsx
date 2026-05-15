@@ -8,6 +8,7 @@ export default function Section({
   entries,
   children,
   projectsById,
+  readOnly = false,
 }: {
   title: string
   /** Drop-target identifier for cross-section drag-reorder. */
@@ -18,6 +19,7 @@ export default function Section({
    *  small project tag using `projectsById[entry.projectId]`. Single-project
    *  views omit this so EntryItem renders without project attribution. */
   projectsById?: Record<string, Project>
+  readOnly?: boolean
 }) {
   return (
     <section
@@ -40,6 +42,7 @@ export default function Section({
             key={e.id}
             entry={e}
             project={projectsById?.[e.projectId]}
+            readOnly={readOnly}
           />
         ))}
       </ul>

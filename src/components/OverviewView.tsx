@@ -1,9 +1,30 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useStore } from '../lib/store'
 import type { Entry, Project } from '../lib/types'
 import { sameDay, todayKey } from '../lib/date'
+import { isTodayView, projectsForDay } from '../lib/projects'
 import Section from './Section'
 import HitArea from './HitArea'
+
+/**
+ * Substring match across every text field on the entry. Tag matches fall
+ * out for free — tags live inline as `#name` patterns in the same text
+ * fields, so a query starting with `#` naturally narrows to tag hits and
+ * a plain query matches both prose and tag text. Case-insensitive.
+ */
+function entryMatchesQuery(e: Entry, normalizedQuery: string): boolean {
+  if (!normalizedQuery) return true
+  const fields: (string | undefined)[] = [
+    e.title,
+    e.body,
+    e.deliverable,
+    e.parkedReason,
+  ]
+  for (const f of fields) {
+    if (f && f.toLowerCase().includes(normalizedQuery)) return true
+  }
+  return false
+}
 
 /**
  * Cross-project Status view. Flattens entries from every project into the
@@ -31,23 +52,40 @@ export default function OverviewView() {
   const statusTheme = useStore((s) => s.statusTheme)
   const setStatusTheme = useStore((s) => s.setStatusTheme)
 
+  // Local search state — not persisted. Empty = no filter.
+  // The search input is hidden by default; clicking the magnifier toggles
+  // it open and reveals the underline-only input. Closing also clears the
+  // query so filter snaps back to "show everything".
+  const [query, setQuery] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
+  const normalizedQuery = query.trim().toLowerCase()
+  const closeSearch = () => {
+    setQuery('')
+    setSearchOpen(false)
+  }
+
   const today = todayKey()
   const activeDay = viewingDay ?? today
+  const readOnly = !isTodayView(viewingDay)
+  const visibleProjects = useMemo(
+    () => projectsForDay(projects, activeDay),
+    [projects, activeDay],
+  )
 
   // Project lookup table powers the per-entry color tag without making each
   // EntryItem do its own scan.
   const projectsById = useMemo(() => {
     const map: Record<string, Project> = {}
-    for (const p of projects) map[p.id] = p
+    for (const p of visibleProjects) map[p.id] = p
     return map
-  }, [projects])
+  }, [visibleProjects])
 
   // Flatten and bucket. We respect the in-flight `dragPreview` state so a
   // dragged card visually jumps to its preview section, just like in the
   // single-project view.
   const { backlog, todo, delivered, decision, learning } = useMemo(() => {
     const all: Entry[] = []
-    for (const p of projects) {
+    for (const p of visibleProjects) {
       const list = entriesByProject[p.id] ?? []
       for (const e of list) all.push(e)
     }
@@ -55,19 +93,33 @@ export default function OverviewView() {
     const visibleKind = (e: Entry) =>
       dragPreview?.entryId === e.id ? dragPreview.previewKind : e.kind
 
-    const backlog = all.filter((e) => visibleKind(e) === 'backlog')
-    const todo = all.filter((e) => visibleKind(e) === 'todo')
+    const matches = (e: Entry) => entryMatchesQuery(e, normalizedQuery)
+
+    const backlog = all.filter(
+      (e) => visibleKind(e) === 'backlog' && matches(e),
+    )
+    const todo = all.filter((e) => visibleKind(e) === 'todo' && matches(e))
     const delivered = all.filter((e) => {
       if (dragPreview?.entryId === e.id) {
-        return dragPreview.previewKind === 'delivered'
+        return dragPreview.previewKind === 'delivered' && matches(e)
       }
-      return e.kind === 'delivered' && sameDay(e.movedAt, activeDay)
+      return (
+        e.kind === 'delivered' &&
+        sameDay(e.movedAt, activeDay) &&
+        matches(e)
+      )
     })
     const decision = all.filter(
-      (e) => e.kind === 'decision' && sameDay(e.createdAt, activeDay),
+      (e) =>
+        e.kind === 'decision' &&
+        sameDay(e.createdAt, activeDay) &&
+        matches(e),
     )
     const learning = all.filter(
-      (e) => e.kind === 'learning' && sameDay(e.createdAt, activeDay),
+      (e) =>
+        e.kind === 'learning' &&
+        sameDay(e.createdAt, activeDay) &&
+        matches(e),
     )
 
     // Newest-first within each section. Stable sort keeps drop-in order
@@ -81,7 +133,7 @@ export default function OverviewView() {
     learning.sort(byNewest)
 
     return { backlog, todo, delivered, decision, learning }
-  }, [projects, entriesByProject, dragPreview, activeDay])
+  }, [visibleProjects, entriesByProject, dragPreview, activeDay, normalizedQuery])
 
   const isDark = statusTheme === 'dark'
   const toggleTheme = () => setStatusTheme(isDark ? 'light' : 'dark')
@@ -111,7 +163,45 @@ export default function OverviewView() {
           </div>
         </div>
 
-        <div className="shrink-0 flex flex-col items-end gap-3">
+        <div className="shrink-0 flex items-start gap-[40px]">
+          {/* Search affordance: collapsed → just the magnifier icon. Click
+              expands an underline-only input below it. The magnifier is
+              right-aligned within the search column so it stays at the
+              same screen position whether the input is open or closed —
+              opening just grows the input leftward beneath it, no icon
+              jump. Substring match across every text field on entries;
+              `#tag` queries naturally narrow to tag matches because tags
+              live inline as `#xxx` in the same fields. */}
+          <div className="flex flex-col items-end gap-1.5">
+            <HitArea
+              onClick={() => (searchOpen ? closeSearch() : setSearchOpen(true))}
+              aria-label={searchOpen ? 'Close search' : 'Search entries'}
+              title={searchOpen ? 'Close search' : 'Search entries'}
+              className="text-plot-ink/75 hover:text-plot-ink dark:text-stone-100/75 dark:hover:text-stone-100 transition-colors"
+            >
+              <SearchIcon />
+            </HitArea>
+            {searchOpen && (
+              <input
+                type="text"
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.nativeEvent.isComposing) return
+                  if (e.key === 'Escape') closeSearch()
+                }}
+                aria-label="Search entries"
+                // -mt-5 pulls the input up 20px so the underline sits
+                // right beneath the magnifier instead of dropping a tall
+                // visual gap between them. The input box overlaps the
+                // magnifier on the rightmost ~14px, but the magnifier
+                // sits on the right edge while text is left-aligned, so
+                // typed content never lands under the icon.
+                className="-mt-5 w-48 bg-transparent outline-none border-b border-plot-ink/40 dark:border-stone-100/40 focus:border-plot-ink dark:focus:border-stone-100 text-[12px] py-0.5 transition-colors"
+              />
+            )}
+          </div>
           <HitArea
             onClick={toggleTheme}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -129,33 +219,58 @@ export default function OverviewView() {
           kind="backlog"
           entries={backlog}
           projectsById={projectsById}
+          readOnly={readOnly}
         />
         <Section
           title="To-do"
           kind="todo"
           entries={todo}
           projectsById={projectsById}
+          readOnly={readOnly}
         />
         <Section
           title="Delivered"
           kind="delivered"
           entries={delivered}
           projectsById={projectsById}
+          readOnly={readOnly}
         />
         <Section
           title="Decision"
           kind="decision"
           entries={decision}
           projectsById={projectsById}
+          readOnly={readOnly}
         />
         <Section
           title="Learning"
           kind="learning"
           entries={learning}
           projectsById={projectsById}
+          readOnly={readOnly}
         />
       </div>
     </main>
+  )
+}
+
+function SearchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className={className}
+    >
+      <circle cx="11" cy="11" r="7" />
+      <line x1="20" y1="20" x2="16" y2="16" />
+    </svg>
   )
 }
 

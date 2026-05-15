@@ -25,10 +25,10 @@ import {
   writeBackupFile,
 } from './backup'
 import { todayKey } from './date'
+import { activeDayKey, projectForDay } from './projects'
 
-type LayoutItem = { i: string; x: number; y: number; w: number; h: number }
-
-export type ViewMode = 'project' | 'status'
+export type ViewMode = 'project' | 'status' | 'stats'
+export type PlotsView = 'bento' | 'city'
 export type StatusTheme = 'light' | 'dark'
 
 export type DragPreview = {
@@ -69,6 +69,8 @@ type Store = {
   viewingDay: string | null
   /** Bottom-bar mode toggle. Persisted via meta so a chosen mode survives reload. */
   viewMode: ViewMode
+  /** Multi-project Plots presentation. Persisted so the city can be a real mode. */
+  plotsView: PlotsView
   /** Light/dark theme for the cross-project Status view. Persisted. */
   statusTheme: StatusTheme
   /**
@@ -104,6 +106,7 @@ type Store = {
 
   setViewingDay: (day: string | null) => void
   setViewMode: (mode: ViewMode) => void
+  setPlotsView: (view: PlotsView) => void
   setStatusTheme: (theme: StatusTheme) => void
   setBentoTree: (tree: BentoTree) => void
   setDragPreview: (preview: DragPreview) => void
@@ -121,25 +124,31 @@ type Store = {
   addProject: (name: string, color: ProjectColor) => void
   renameProject: (id: string, name: string) => void
   recolorProject: (id: string, color: ProjectColor) => void
-  reorderProjects: (sourceId: string, targetId: string) => void
   /** Swap two projects' positions in the array — used for live drag-reorder. */
   swapProjects: (idA: string, idB: string) => void
   deleteProject: (id: string) => Promise<void>
-  setLayouts: (newLayouts: LayoutItem[]) => void
 
-  addTodo: (title: string) => void
-  addBacklog: (title: string) => void
+  addTodo: (title: string, projectId?: string) => void
+  addBacklog: (title: string, projectId?: string) => void
+  /** Direct add to Delivered (skipping the to-do step). The text becomes
+   *  the entry's title; `deliverable` stays empty for the user to fill in
+   *  later if they want a separate "what was actually shipped" note. */
+  addDelivered: (title: string, projectId?: string) => void
   /** Journal entry: a decision logged today (kind='decision', body=text). */
-  addDecision: (body: string) => void
+  addDecision: (body: string, projectId?: string) => void
   /** Journal entry: a learning logged today (kind='learning', body=text). */
-  addLearning: (body: string) => void
-  markDelivered: (id: string, deliverable: string) => void
-  parkToBacklog: (id: string, reason?: string) => void
+  addLearning: (body: string, projectId?: string) => void
   /**
    * Cross-section move triggered by drag. Handles all transitions between
    * todo/backlog/delivered and rewrites kind-specific metadata as needed.
    */
   moveEntry: (id: string, newKind: 'todo' | 'backlog' | 'delivered') => void
+  /**
+   * Swap two entries' positions within their project's entries array. Used
+   * by the in-section vertical drag-reorder. Both ids must belong to the
+   * same project. Commutative: calling again with the same pair undoes.
+   */
+  swapEntries: (idA: string, idB: string) => void
   editEntry: (id: string, patch: Partial<Entry>) => void
   deleteEntry: (id: string) => void
 }
@@ -151,6 +160,7 @@ export const useStore = create<Store>((set, get) => ({
   currentProjectId: null,
   viewingDay: null,
   viewMode: 'project',
+  plotsView: 'bento',
   statusTheme: 'light',
   bentoTree: null,
   dragPreview: null,
@@ -166,6 +176,10 @@ export const useStore = create<Store>((set, get) => ({
     set({ viewMode: mode })
     // Persist alongside lastOpenedDay so it survives reload.
     loadMeta().then((meta) => saveMeta({ ...meta, viewMode: mode }))
+  },
+  setPlotsView: (view) => {
+    set({ plotsView: view })
+    loadMeta().then((meta) => saveMeta({ ...meta, plotsView: view }))
   },
   setStatusTheme: (theme) => {
     set({ statusTheme: theme })
@@ -237,28 +251,18 @@ export const useStore = create<Store>((set, get) => ({
     const projects = await loadProjects()
     const meta = await loadMeta()
     const today = todayKey()
-    const isNewDay =
-      meta.lastOpenedDay !== undefined && meta.lastOpenedDay !== today
 
     const entriesByProject: Record<string, Entry[]> = {}
     for (const p of projects) {
-      let entries = await loadEntries(p.id)
-      // On a new day, auto-park yesterday's leftover todos into Backlog.
-      if (isNewDay) {
-        const now = Date.now()
-        let mutated = false
-        entries = entries.map((e) => {
-          if (e.kind === 'todo') {
-            mutated = true
-            return { ...e, kind: 'backlog' as const, movedAt: now }
-          }
-          return e
-        })
-        if (mutated) await saveEntries(p.id, entries)
-      }
+      const entries = await loadEntries(p.id)
       entriesByProject[p.id] = entries
     }
 
+    // We still track `lastOpenedDay` for any future per-day-rollover
+    // logic, but Plot's spec is explicit (option A): Backlog and To-do
+    // both persist across midnight. Yesterday's untouched to-dos stay
+    // in the To-do column today; they only leave it via an explicit
+    // user action (drag, edit, delete).
     await saveMeta({ ...meta, lastOpenedDay: today })
 
     // Restore the backup folder handle saved in IndexedDB across reloads.
@@ -281,6 +285,7 @@ export const useStore = create<Store>((set, get) => ({
       entriesByProject,
       loaded: true,
       viewMode: meta.viewMode ?? 'project',
+      plotsView: meta.plotsView ?? 'bento',
       statusTheme: meta.statusTheme ?? 'light',
       bentoTree: meta.bentoTree ?? null,
       backupHandle,
@@ -329,18 +334,6 @@ export const useStore = create<Store>((set, get) => ({
     saveProjects(projects)
   },
 
-  reorderProjects: (sourceId, targetId) => {
-    const projects = get().projects
-    const sourceIdx = projects.findIndex((p) => p.id === sourceId)
-    const targetIdx = projects.findIndex((p) => p.id === targetId)
-    if (sourceIdx === -1 || targetIdx === -1 || sourceIdx === targetIdx) return
-    const next = [...projects]
-    const [moved] = next.splice(sourceIdx, 1)
-    next.splice(targetIdx, 0, moved)
-    set({ projects: next })
-    saveProjects(next)
-  },
-
   swapProjects: (idA, idB) => {
     if (idA === idB) return
     const projects = get().projects
@@ -369,21 +362,15 @@ export const useStore = create<Store>((set, get) => ({
     await removeEntries(id)
   },
 
-  setLayouts: (newLayouts) => {
-    const projects = get().projects.map((p) => {
-      const l = newLayouts.find((n) => n.i === p.id)
-      if (!l) return p
-      return { ...p, layout: { x: l.x, y: l.y, w: l.w, h: l.h } }
-    })
-    set({ projects })
-    saveProjects(projects)
-  },
-
-  addTodo: (title) => {
-    // Fall back to projects[0] when nothing is explicitly selected — that's
-    // the case in the single-project app, where StatusView renders projects[0]
-    // even though currentProjectId hasn't been set.
-    const projectId = get().currentProjectId ?? get().projects[0]?.id
+  addTodo: (title, projectIdOverride) => {
+    const state = get()
+    const projectId =
+      projectIdOverride ??
+      projectForDay(
+        state.projects,
+        state.currentProjectId,
+        activeDayKey(state.viewingDay),
+      )?.id
     if (!projectId) return
     const text = title.trim()
     if (!text) return
@@ -404,11 +391,15 @@ export const useStore = create<Store>((set, get) => ({
     saveEntries(projectId, next)
   },
 
-  addBacklog: (title) => {
-    // Fall back to projects[0] when nothing is explicitly selected — that's
-    // the case in the single-project app, where StatusView renders projects[0]
-    // even though currentProjectId hasn't been set.
-    const projectId = get().currentProjectId ?? get().projects[0]?.id
+  addBacklog: (title, projectIdOverride) => {
+    const state = get()
+    const projectId =
+      projectIdOverride ??
+      projectForDay(
+        state.projects,
+        state.currentProjectId,
+        activeDayKey(state.viewingDay),
+      )?.id
     if (!projectId) return
     const text = title.trim()
     if (!text) return
@@ -429,8 +420,47 @@ export const useStore = create<Store>((set, get) => ({
     saveEntries(projectId, next)
   },
 
-  addDecision: (body) => {
-    const projectId = get().currentProjectId ?? get().projects[0]?.id
+  addDelivered: (title, projectIdOverride) => {
+    // Direct-add to Delivered, bypassing the to-do step. Used to log
+    // already-completed work without a prior planning entry. `deliverable`
+    // is left empty — the user can edit the card afterwards to attach a
+    // more detailed "what shipped" note.
+    const state = get()
+    const projectId =
+      projectIdOverride ??
+      projectForDay(
+        state.projects,
+        state.currentProjectId,
+        activeDayKey(state.viewingDay),
+      )?.id
+    if (!projectId) return
+    const text = title.trim()
+    if (!text) return
+    const now = Date.now()
+    const entry: Entry = {
+      id: crypto.randomUUID(),
+      projectId,
+      kind: 'delivered',
+      title: text,
+      createdAt: now,
+      movedAt: now,
+    }
+    const next = [entry, ...(get().entriesByProject[projectId] ?? [])]
+    set({
+      entriesByProject: { ...get().entriesByProject, [projectId]: next },
+    })
+    saveEntries(projectId, next)
+  },
+
+  addDecision: (body, projectIdOverride) => {
+    const state = get()
+    const projectId =
+      projectIdOverride ??
+      projectForDay(
+        state.projects,
+        state.currentProjectId,
+        activeDayKey(state.viewingDay),
+      )?.id
     if (!projectId) return
     const text = body.trim()
     if (!text) return
@@ -452,8 +482,15 @@ export const useStore = create<Store>((set, get) => ({
     saveEntries(projectId, next)
   },
 
-  addLearning: (body) => {
-    const projectId = get().currentProjectId ?? get().projects[0]?.id
+  addLearning: (body, projectIdOverride) => {
+    const state = get()
+    const projectId =
+      projectIdOverride ??
+      projectForDay(
+        state.projects,
+        state.currentProjectId,
+        activeDayKey(state.viewingDay),
+      )?.id
     if (!projectId) return
     const text = body.trim()
     if (!text) return
@@ -474,50 +511,22 @@ export const useStore = create<Store>((set, get) => ({
     saveEntries(projectId, next)
   },
 
-  markDelivered: (id, deliverable) => {
-    // Fall back to projects[0] when nothing is explicitly selected — that's
-    // the case in the single-project app, where StatusView renders projects[0]
-    // even though currentProjectId hasn't been set.
-    const projectId = get().currentProjectId ?? get().projects[0]?.id
-    if (!projectId) return
-    const text = deliverable.trim()
-    if (!text) return
-    const now = Date.now()
-    const entries = get().entriesByProject[projectId] ?? []
-    const next = entries.map((e) =>
-      e.id === id
-        ? { ...e, kind: 'delivered' as const, deliverable: text, movedAt: now }
-        : e,
-    )
+  swapEntries: (idA, idB) => {
+    // In-section reorder. Both ids must live in the same project's entries
+    // array — they're swapped in place. Commutative: calling again with
+    // the same pair restores the original order, which the drag-reorder
+    // logic relies on for in-flight "undo".
+    const loc = findEntryProject(get().entriesByProject, idA)
+    if (!loc) return
+    const idxA = loc.entries.findIndex((e) => e.id === idA)
+    const idxB = loc.entries.findIndex((e) => e.id === idB)
+    if (idxA === -1 || idxB === -1 || idxA === idxB) return
+    const next = [...loc.entries]
+    ;[next[idxA], next[idxB]] = [next[idxB], next[idxA]]
     set({
-      entriesByProject: { ...get().entriesByProject, [projectId]: next },
+      entriesByProject: { ...get().entriesByProject, [loc.projectId]: next },
     })
-    saveEntries(projectId, next)
-  },
-
-  parkToBacklog: (id, reason) => {
-    // Fall back to projects[0] when nothing is explicitly selected — that's
-    // the case in the single-project app, where StatusView renders projects[0]
-    // even though currentProjectId hasn't been set.
-    const projectId = get().currentProjectId ?? get().projects[0]?.id
-    if (!projectId) return
-    const now = Date.now()
-    const trimmed = reason?.trim()
-    const entries = get().entriesByProject[projectId] ?? []
-    const next = entries.map((e) =>
-      e.id === id
-        ? {
-            ...e,
-            kind: 'backlog' as const,
-            parkedReason: trimmed || undefined,
-            movedAt: now,
-          }
-        : e,
-    )
-    set({
-      entriesByProject: { ...get().entriesByProject, [projectId]: next },
-    })
-    saveEntries(projectId, next)
+    saveEntries(loc.projectId, next)
   },
 
   moveEntry: (id, newKind) => {

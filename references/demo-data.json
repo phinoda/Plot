@@ -1,0 +1,611 @@
+{
+  "plot:projects": [
+    {
+      "id": "p-receiptly",
+      "name": "Receiptly",
+      "color": "terracotta",
+      "createdAt": 1775034000000
+    },
+    {
+      "id": "p-promptdeck",
+      "name": "PromptDeck",
+      "color": "iris",
+      "createdAt": 1775037600000
+    },
+    {
+      "id": "p-mealmate",
+      "name": "MealMate",
+      "color": "jade",
+      "createdAt": 1775041200000
+    },
+    {
+      "id": "p-focusforge",
+      "name": "FocusForge",
+      "color": "denim",
+      "createdAt": 1775044800000
+    },
+    {
+      "id": "p-launchnotes",
+      "name": "LaunchNotes",
+      "color": "mustard",
+      "createdAt": 1775048400000
+    },
+    {
+      "id": "p-tinycrm",
+      "name": "TinyCRM",
+      "color": "rose",
+      "createdAt": 1775052000000
+    },
+    {
+      "id": "p-habittrail",
+      "name": "HabitTrail",
+      "color": "sage",
+      "createdAt": 1775055600000
+    }
+  ],
+  "plot:meta": {
+    "lastOpenedDay": "2026-05-13",
+    "viewMode": "project",
+    "statusTheme": "light"
+  },
+  "plot:entries:p-receiptly": [
+    {
+      "id": "e-rc-01",
+      "projectId": "p-receiptly",
+      "kind": "todo",
+      "title": "Parse merchant, total, and tax from mobile receipt photos",
+      "createdAt": 1778576400000,
+      "movedAt": 1778576400000
+    },
+    {
+      "id": "e-rc-02",
+      "projectId": "p-receiptly",
+      "kind": "todo",
+      "title": "Add review screen for low-confidence OCR fields",
+      "createdAt": 1778515200000,
+      "movedAt": 1778515200000
+    },
+    {
+      "id": "e-rc-03",
+      "projectId": "p-receiptly",
+      "kind": "todo",
+      "title": "Export selected receipts as CSV for accountants",
+      "createdAt": 1778421600000,
+      "movedAt": 1778421600000
+    },
+    {
+      "id": "e-rc-04",
+      "projectId": "p-receiptly",
+      "kind": "delivered",
+      "title": "Built local receipt inbox with drag-and-drop upload",
+      "deliverable": "Users can drop JPG, PNG, or PDF receipts into a dated inbox. Files persist locally and preview instantly.",
+      "createdAt": 1777507200000,
+      "movedAt": 1778349600000
+    },
+    {
+      "id": "e-rc-05",
+      "projectId": "p-receiptly",
+      "kind": "delivered",
+      "title": "Added category chips for meals, travel, software, and office",
+      "deliverable": "Chips save per receipt and can be edited inline. Filtering by category is now fast enough for weekly cleanup.",
+      "createdAt": 1777122000000,
+      "movedAt": 1777734000000
+    },
+    {
+      "id": "e-rc-06",
+      "projectId": "p-receiptly",
+      "kind": "backlog",
+      "title": "Connect Gmail import for emailed receipts",
+      "parkedReason": "OAuth review is too much surface area before the manual workflow is proven.",
+      "createdAt": 1778234400000,
+      "movedAt": 1778234400000
+    },
+    {
+      "id": "e-rc-07",
+      "projectId": "p-receiptly",
+      "kind": "backlog",
+      "title": "Detect duplicate receipts across PDF exports",
+      "parkedReason": "Useful later, but current beta users only upload 20-40 receipts at a time.",
+      "createdAt": 1777978800000,
+      "movedAt": 1777978800000
+    },
+    {
+      "id": "e-rc-08",
+      "projectId": "p-receiptly",
+      "kind": "decision",
+      "title": "",
+      "body": "Stay local-first for v1. People are more willing to test a receipt tool when tax documents never leave the browser.",
+      "createdAt": 1778065200000,
+      "movedAt": 1778065200000
+    },
+    {
+      "id": "e-rc-09",
+      "projectId": "p-receiptly",
+      "kind": "learning",
+      "title": "",
+      "body": "Users care more about correcting totals quickly than perfect OCR. A fast review loop beats invisible automation.",
+      "createdAt": 1777885200000,
+      "movedAt": 1777885200000
+    }
+  ],
+  "plot:entries:p-promptdeck": [
+    {
+      "id": "e-pd-01",
+      "projectId": "p-promptdeck",
+      "kind": "todo",
+      "title": "Ship prompt version history with diff view",
+      "createdAt": 1778580000000,
+      "movedAt": 1778580000000
+    },
+    {
+      "id": "e-pd-02",
+      "projectId": "p-promptdeck",
+      "kind": "todo",
+      "title": "Add keyboard shortcut to duplicate a prompt card",
+      "createdAt": 1778508000000,
+      "movedAt": 1778508000000
+    },
+    {
+      "id": "e-pd-03",
+      "projectId": "p-promptdeck",
+      "kind": "todo",
+      "title": "Create template pack for product research prompts",
+      "createdAt": 1778410800000,
+      "movedAt": 1778410800000
+    },
+    {
+      "id": "e-pd-04",
+      "projectId": "p-promptdeck",
+      "kind": "delivered",
+      "title": "Built board view for prompt collections",
+      "deliverable": "Prompt cards can be grouped by use case, reordered, and opened in a focused editor.",
+      "createdAt": 1777122000000,
+      "movedAt": 1778259600000
+    },
+    {
+      "id": "e-pd-05",
+      "projectId": "p-promptdeck",
+      "kind": "delivered",
+      "title": "Added run notes after each prompt test",
+      "deliverable": "Each run stores model, input context, and a short result note so good prompts are easier to reuse.",
+      "createdAt": 1776513600000,
+      "movedAt": 1777478400000
+    },
+    {
+      "id": "e-pd-06",
+      "projectId": "p-promptdeck",
+      "kind": "backlog",
+      "title": "One-click publishable prompt gallery",
+      "parkedReason": "Public sharing can wait until the private workflow feels indispensable.",
+      "createdAt": 1778144400000,
+      "movedAt": 1778144400000
+    },
+    {
+      "id": "e-pd-07",
+      "projectId": "p-promptdeck",
+      "kind": "backlog",
+      "title": "Team workspace billing",
+      "parkedReason": "Solo users are the current target. Billing would slow the product loop.",
+      "createdAt": 1777561200000,
+      "movedAt": 1777561200000
+    },
+    {
+      "id": "e-pd-08",
+      "projectId": "p-promptdeck",
+      "kind": "decision",
+      "title": "",
+      "body": "Make the core unit a prompt card, not a chat thread. People want reusable building blocks, not another inbox of conversations.",
+      "createdAt": 1777806000000,
+      "movedAt": 1777806000000
+    },
+    {
+      "id": "e-pd-09",
+      "projectId": "p-promptdeck",
+      "kind": "learning",
+      "title": "",
+      "body": "The first five beta users all asked where the 'last good version' went. Versioning is not a power-user feature here.",
+      "createdAt": 1777219200000,
+      "movedAt": 1777219200000
+    }
+  ],
+  "plot:entries:p-mealmate": [
+    {
+      "id": "e-mm-01",
+      "projectId": "p-mealmate",
+      "kind": "todo",
+      "title": "Generate grocery list from a 5-day meal plan",
+      "createdAt": 1778572800000,
+      "movedAt": 1778572800000
+    },
+    {
+      "id": "e-mm-02",
+      "projectId": "p-mealmate",
+      "kind": "todo",
+      "title": "Add pantry exclusions before recipe suggestions",
+      "createdAt": 1778526000000,
+      "movedAt": 1778526000000
+    },
+    {
+      "id": "e-mm-03",
+      "projectId": "p-mealmate",
+      "kind": "todo",
+      "title": "Fix recipe cards overflowing on small screens",
+      "createdAt": 1778338800000,
+      "movedAt": 1778338800000
+    },
+    {
+      "id": "e-mm-04",
+      "projectId": "p-mealmate",
+      "kind": "delivered",
+      "title": "Added drag-to-swap meals between weekdays",
+      "deliverable": "Users can move dinners around the week without regenerating the whole plan.",
+      "createdAt": 1777374000000,
+      "movedAt": 1778187600000
+    },
+    {
+      "id": "e-mm-05",
+      "projectId": "p-mealmate",
+      "kind": "delivered",
+      "title": "Built dietary preference setup",
+      "deliverable": "Vegetarian, gluten-free, high-protein, and kid-friendly preferences now steer suggestions.",
+      "createdAt": 1777665600000,
+      "movedAt": 1777665600000
+    },
+    {
+      "id": "e-mm-06",
+      "projectId": "p-mealmate",
+      "kind": "backlog",
+      "title": "Integrate Instacart cart handoff",
+      "parkedReason": "Partnership/API work is too early before retention is validated.",
+      "createdAt": 1777374000000,
+      "movedAt": 1777374000000
+    },
+    {
+      "id": "e-mm-07",
+      "projectId": "p-mealmate",
+      "kind": "backlog",
+      "title": "Nutrition macro dashboard",
+      "parkedReason": "Could pull the app toward calorie tracking, which is not the current promise.",
+      "createdAt": 1776790800000,
+      "movedAt": 1776790800000
+    },
+    {
+      "id": "e-mm-08",
+      "projectId": "p-mealmate",
+      "kind": "decision",
+      "title": "",
+      "body": "Position as 'reduce dinner decisions' instead of 'optimize nutrition'. The former is the pain people immediately recognize.",
+      "createdAt": 1777716000000,
+      "movedAt": 1777716000000
+    },
+    {
+      "id": "e-mm-09",
+      "projectId": "p-mealmate",
+      "kind": "learning",
+      "title": "",
+      "body": "Regenerating the whole week feels wasteful. People want to lock two meals they like and only replace the awkward slots.",
+      "createdAt": 1776790800000,
+      "movedAt": 1776790800000
+    }
+  ],
+  "plot:entries:p-focusforge": [
+    {
+      "id": "e-ff-01",
+      "projectId": "p-focusforge",
+      "kind": "todo",
+      "title": "Add blocklist schedules for workdays vs weekends",
+      "createdAt": 1778576400000,
+      "movedAt": 1778576400000
+    },
+    {
+      "id": "e-ff-02",
+      "projectId": "p-focusforge",
+      "kind": "todo",
+      "title": "Show session recap after a completed focus block",
+      "createdAt": 1778515200000,
+      "movedAt": 1778515200000
+    },
+    {
+      "id": "e-ff-03",
+      "projectId": "p-focusforge",
+      "kind": "todo",
+      "title": "Fix timer drift after laptop sleep",
+      "createdAt": 1778421600000,
+      "movedAt": 1778421600000
+    },
+    {
+      "id": "e-ff-04",
+      "projectId": "p-focusforge",
+      "kind": "delivered",
+      "title": "Shipped strict mode for deep work sessions",
+      "deliverable": "Blocked sites stay blocked until the timer ends. Escape hatch requires typing the session goal back.",
+      "createdAt": 1777507200000,
+      "movedAt": 1778349600000
+    },
+    {
+      "id": "e-ff-05",
+      "projectId": "p-focusforge",
+      "kind": "delivered",
+      "title": "Added weekly focus streaks",
+      "deliverable": "Dashboard now shows completed blocks, longest streak, and missed days without feeling punitive.",
+      "createdAt": 1777122000000,
+      "movedAt": 1777734000000
+    },
+    {
+      "id": "e-ff-06",
+      "projectId": "p-focusforge",
+      "kind": "backlog",
+      "title": "Sync blocklists across devices",
+      "parkedReason": "Useful, but local Chrome storage is enough for the first extension-only release.",
+      "createdAt": 1778234400000,
+      "movedAt": 1778234400000
+    },
+    {
+      "id": "e-ff-07",
+      "projectId": "p-focusforge",
+      "kind": "backlog",
+      "title": "Ambient sound player",
+      "parkedReason": "Nice-to-have that risks turning the product into a generic focus app.",
+      "createdAt": 1777978800000,
+      "movedAt": 1777978800000
+    },
+    {
+      "id": "e-ff-08",
+      "projectId": "p-focusforge",
+      "kind": "decision",
+      "title": "",
+      "body": "The product should intervene before distraction, not report after the fact. Blocking and planning matter more than analytics.",
+      "createdAt": 1778065200000,
+      "movedAt": 1778065200000
+    },
+    {
+      "id": "e-ff-09",
+      "projectId": "p-focusforge",
+      "kind": "learning",
+      "title": "",
+      "body": "A tiny pre-session goal makes strict mode feel intentional instead of hostile.",
+      "createdAt": 1777885200000,
+      "movedAt": 1777885200000
+    }
+  ],
+  "plot:entries:p-launchnotes": [
+    {
+      "id": "e-ln-01",
+      "projectId": "p-launchnotes",
+      "kind": "todo",
+      "title": "Generate release note draft from merged PR titles",
+      "createdAt": 1778580000000,
+      "movedAt": 1778580000000
+    },
+    {
+      "id": "e-ln-02",
+      "projectId": "p-launchnotes",
+      "kind": "todo",
+      "title": "Add tone presets: concise, customer-facing, technical",
+      "createdAt": 1778508000000,
+      "movedAt": 1778508000000
+    },
+    {
+      "id": "e-ln-03",
+      "projectId": "p-launchnotes",
+      "kind": "todo",
+      "title": "Fix markdown export losing nested bullet indentation",
+      "createdAt": 1778410800000,
+      "movedAt": 1778410800000
+    },
+    {
+      "id": "e-ln-04",
+      "projectId": "p-launchnotes",
+      "kind": "delivered",
+      "title": "Built changelog editor with before/after preview",
+      "deliverable": "Users can edit generated copy and compare against the raw commit summary in one screen.",
+      "createdAt": 1777122000000,
+      "movedAt": 1778259600000
+    },
+    {
+      "id": "e-ln-05",
+      "projectId": "p-launchnotes",
+      "kind": "delivered",
+      "title": "Added Linear issue import by project key",
+      "deliverable": "Import pulls issue title, status, assignee, and labels into a draft release bucket.",
+      "createdAt": 1776513600000,
+      "movedAt": 1777478400000
+    },
+    {
+      "id": "e-ln-06",
+      "projectId": "p-launchnotes",
+      "kind": "backlog",
+      "title": "Auto-publish to Slack and Discord",
+      "parkedReason": "Export is enough for launch. Integrations can follow if teams ask repeatedly.",
+      "createdAt": 1778144400000,
+      "movedAt": 1778144400000
+    },
+    {
+      "id": "e-ln-07",
+      "projectId": "p-launchnotes",
+      "kind": "backlog",
+      "title": "Public changelog hosting",
+      "parkedReason": "Would require auth, teams, and billing earlier than needed.",
+      "createdAt": 1777561200000,
+      "movedAt": 1777561200000
+    },
+    {
+      "id": "e-ln-08",
+      "projectId": "p-launchnotes",
+      "kind": "decision",
+      "title": "",
+      "body": "Start as a drafting tool, not a publishing platform. The immediate pain is turning messy shipping notes into clear copy.",
+      "createdAt": 1777806000000,
+      "movedAt": 1777806000000
+    },
+    {
+      "id": "e-ln-09",
+      "projectId": "p-launchnotes",
+      "kind": "learning",
+      "title": "",
+      "body": "Founders want fewer adjectives and more concrete customer impact. The best generated notes mention what changed and who benefits.",
+      "createdAt": 1777219200000,
+      "movedAt": 1777219200000
+    }
+  ],
+  "plot:entries:p-tinycrm": [
+    {
+      "id": "e-tc-01",
+      "projectId": "p-tinycrm",
+      "kind": "todo",
+      "title": "Add follow-up reminders to each contact card",
+      "createdAt": 1778572800000,
+      "movedAt": 1778572800000
+    },
+    {
+      "id": "e-tc-02",
+      "projectId": "p-tinycrm",
+      "kind": "todo",
+      "title": "Import contacts from a CSV with column mapping",
+      "createdAt": 1778526000000,
+      "movedAt": 1778526000000
+    },
+    {
+      "id": "e-tc-03",
+      "projectId": "p-tinycrm",
+      "kind": "todo",
+      "title": "Add empty states for zero leads and zero follow-ups",
+      "createdAt": 1778338800000,
+      "movedAt": 1778338800000
+    },
+    {
+      "id": "e-tc-04",
+      "projectId": "p-tinycrm",
+      "kind": "delivered",
+      "title": "Built pipeline columns for Lead, Warm, Proposal, Closed",
+      "deliverable": "Cards drag between columns and keep last-contact notes visible.",
+      "createdAt": 1777374000000,
+      "movedAt": 1778187600000
+    },
+    {
+      "id": "e-tc-05",
+      "projectId": "p-tinycrm",
+      "kind": "delivered",
+      "title": "Added quick note capture from the keyboard",
+      "deliverable": "Pressing N opens a note composer on the selected contact without leaving the board.",
+      "createdAt": 1777665600000,
+      "movedAt": 1777665600000
+    },
+    {
+      "id": "e-tc-06",
+      "projectId": "p-tinycrm",
+      "kind": "backlog",
+      "title": "Email inbox sync",
+      "parkedReason": "Manual notes are enough for the lightweight CRM promise.",
+      "createdAt": 1777374000000,
+      "movedAt": 1777374000000
+    },
+    {
+      "id": "e-tc-07",
+      "projectId": "p-tinycrm",
+      "kind": "backlog",
+      "title": "Team permissions",
+      "parkedReason": "This is for solo consultants first. Team features would dilute the UX.",
+      "createdAt": 1776790800000,
+      "movedAt": 1776790800000
+    },
+    {
+      "id": "e-tc-08",
+      "projectId": "p-tinycrm",
+      "kind": "decision",
+      "title": "",
+      "body": "Optimize for the weekly review ritual. A tiny CRM succeeds if it tells me who needs attention today.",
+      "createdAt": 1777716000000,
+      "movedAt": 1777716000000
+    },
+    {
+      "id": "e-tc-09",
+      "projectId": "p-tinycrm",
+      "kind": "learning",
+      "title": "",
+      "body": "People do not want another Salesforce. They want fewer dropped conversations and one place to remember context.",
+      "createdAt": 1776790800000,
+      "movedAt": 1776790800000
+    }
+  ],
+  "plot:entries:p-habittrail": [
+    {
+      "id": "e-ht-01",
+      "projectId": "p-habittrail",
+      "kind": "todo",
+      "title": "Add weekly habit review with keep/change/drop prompts",
+      "createdAt": 1778576400000,
+      "movedAt": 1778576400000
+    },
+    {
+      "id": "e-ht-02",
+      "projectId": "p-habittrail",
+      "kind": "todo",
+      "title": "Build calendar heatmap for habit streaks",
+      "createdAt": 1778515200000,
+      "movedAt": 1778515200000
+    },
+    {
+      "id": "e-ht-03",
+      "projectId": "p-habittrail",
+      "kind": "todo",
+      "title": "Fix timezone bug that marks late-night check-ins as tomorrow",
+      "createdAt": 1778421600000,
+      "movedAt": 1778421600000
+    },
+    {
+      "id": "e-ht-04",
+      "projectId": "p-habittrail",
+      "kind": "delivered",
+      "title": "Added flexible targets for weekly habits",
+      "deliverable": "Users can set '3 times per week' instead of daily-only streaks. Misses feel less punishing.",
+      "createdAt": 1777507200000,
+      "movedAt": 1778349600000
+    },
+    {
+      "id": "e-ht-05",
+      "projectId": "p-habittrail",
+      "kind": "delivered",
+      "title": "Built private notes on each check-in",
+      "deliverable": "Each completion can include a one-line note about context, mood, or obstacle.",
+      "createdAt": 1777122000000,
+      "movedAt": 1777734000000
+    },
+    {
+      "id": "e-ht-06",
+      "projectId": "p-habittrail",
+      "kind": "backlog",
+      "title": "Social accountability groups",
+      "parkedReason": "The product should work as a private tracker before adding social pressure.",
+      "createdAt": 1778234400000,
+      "movedAt": 1778234400000
+    },
+    {
+      "id": "e-ht-07",
+      "projectId": "p-habittrail",
+      "kind": "backlog",
+      "title": "Apple Health integration",
+      "parkedReason": "Useful for fitness habits, but too narrow for the first public version.",
+      "createdAt": 1777978800000,
+      "movedAt": 1777978800000
+    },
+    {
+      "id": "e-ht-08",
+      "projectId": "p-habittrail",
+      "kind": "decision",
+      "title": "",
+      "body": "Avoid guilt-based copy. Habit tools already make people feel behind; this one should help people restart cleanly.",
+      "createdAt": 1778065200000,
+      "movedAt": 1778065200000
+    },
+    {
+      "id": "e-ht-09",
+      "projectId": "p-habittrail",
+      "kind": "learning",
+      "title": "",
+      "body": "Weekly targets make people more honest. Daily streaks look impressive but cause silent churn after one missed day.",
+      "createdAt": 1777885200000,
+      "movedAt": 1777885200000
+    }
+  ]
+}

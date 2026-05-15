@@ -5,6 +5,15 @@ import { crx } from '@crxjs/vite-plugin'
 import manifest from './manifest.config'
 
 export default defineConfig({
+  build: {
+    // This project is loaded into Chrome directly from `dist` as an unpacked
+    // extension. Vite's default build behavior deletes `dist` before writing
+    // fresh files; if Chrome refreshes the extension page during that gap, it
+    // reports chrome-extension://.../index.html as missing. Keeping the old
+    // files in place makes rebuilds atomic enough for an already-loaded
+    // extension.
+    emptyOutDir: false,
+  },
   plugins: [
     react(),
     tailwindcss(),

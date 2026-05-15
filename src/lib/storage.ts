@@ -8,7 +8,9 @@ export type Meta = {
   /** YYYY-MM-DD of the last time the app was opened; powers day-rollover logic. */
   lastOpenedDay?: string
   /** Last selected bottom-bar mode. */
-  viewMode?: 'project' | 'status'
+  viewMode?: 'project' | 'status' | 'stats'
+  /** Presentation style for the multi-project Plots landing. */
+  plotsView?: 'bento' | 'city'
   /** Persisted bento landing layout — survives tab close/reopen. */
   bentoTree?: BentoTree
   /** Light/dark theme for the cross-project Status view. Single-project views

@@ -38,6 +38,7 @@ export default function CreateProject({
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => {
+            if (e.nativeEvent.isComposing) return
             if (e.key === 'Enter') submit()
             else if (e.key === 'Escape') onCancel()
           }}

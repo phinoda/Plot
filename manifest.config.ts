@@ -7,7 +7,13 @@ export default defineManifest(({ command }) => {
     manifest_version: 3,
     name: 'Plot',
     version: '0.0.1',
-    description: 'A treemap of your projects on every new tab.',
+    description: 'A new tab workspace for tracking projects, decisions, learnings, and delivery.',
+    icons: {
+      16: 'icons/icon-16.png',
+      32: 'icons/icon-32.png',
+      48: 'icons/icon-48.png',
+      128: 'icons/icon-128.png',
+    },
     chrome_url_overrides: {
       newtab: 'index.html',
     },
